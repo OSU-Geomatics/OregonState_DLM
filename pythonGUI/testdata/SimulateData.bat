@@ -1,0 +1,2 @@
+start python echoFile2COM.py "D:\Dropbox\OSU\DLM_Accelerometers\GUI\testdata\TestCOM3.log" COM100 921600 0.0025
+start python echoFile2COM.py "D:\Dropbox\OSU\DLM_Accelerometers\GUI\testdata\TestCOM4.log" COM102 921600 0.0025
