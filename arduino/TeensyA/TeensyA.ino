@@ -32,8 +32,8 @@ void setup() {
   
   // Open Port for transmitting data
   Serial.begin(BAUD);
-  accelB.init(SCALE_8G, ODR_200);
-  accelA.init(SCALE_8G, ODR_200);
+  accelB.init(SCALE_8G, ODR_400);
+  accelA.init(SCALE_8G, ODR_400);
 }
 
 
@@ -45,13 +45,13 @@ void loop()
     long curTime = millis() - startTime;
     printCalculatedAccels(accelA, accelIDa, curTime);
   }
-  
   if (accelB.available())
   {
     accelB.read();
     long curTime = millis() - startTime;
     printCalculatedAccels(accelB, accelIDb, curTime);
-  }  
+  }
+  Serial.send_now();
 }
 
 void printCalculatedAccels(MMA8452Q accel, char accelID, long curTime)
