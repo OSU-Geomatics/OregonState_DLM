@@ -1,7 +1,15 @@
+#visio
 *.~vsdx
+
+#pycharm
 .idea/
+__pycache__/
+
+#pyinstaller
 build/
 dist/
+
+#latex
 *.out
 *.aux
 *.gz
