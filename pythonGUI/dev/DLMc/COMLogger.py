@@ -3,6 +3,7 @@ import serial
 import threading
 import time
 
+
 def run(argv):
     # Parse arguments
     nargs = len(argv)
@@ -71,8 +72,8 @@ def writeSerial(comport, baudrate, filehandle, lock, keepwriting):
         lock.acquire()
         filehandle.write(alldataline[0:-2] + '\n')
         lock.release()
-        nAvailable = ser.inWaiting()
-        if nAvailable>5000:
+        navailable = ser.inWaiting()
+        if navailable > 5000:
             nbad += 1
 
         if nbad > 100 and not haswarned:

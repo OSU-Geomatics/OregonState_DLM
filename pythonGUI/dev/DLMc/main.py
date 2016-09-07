@@ -3,6 +3,7 @@ import serial
 import COMLogger
 import time
 
+
 def run(argv):
     # Parse Argument
     if len(argv) == 1:
@@ -31,24 +32,24 @@ def run(argv):
 
 
 def dlmfindcomports():
-    com1 , com2 = "", ""
+    com1, com2 = "", ""
     successa = False
     successb = False
     successboth = False
     for comNum in range(0, 255):
-        comName = "COM" + str(comNum)
+        comname = "COM" + str(comNum)
         try:
-            ser = serial.Serial(comName, timeout=0.01)
+            ser = serial.Serial(comname, timeout=0.01)
             try:
                 for lineNum in range(0, 10):
                     dataline = ser.readline().decode().split(',')
                     if len(dataline) == 5:
-                        ID = dataline[0]
-                        if ID == "A" or ID == "B":
-                            com1 = comName
+                        sensorid = dataline[0]
+                        if sensorid == "A" or sensorid == "B":
+                            com1 = comname
                             successa = True
-                        elif ID == "C" or ID == "D":
-                            com2 = comName
+                        elif sensorid == "C" or sensorid == "D":
+                            com2 = comname
                             successb = True
             finally:
                 ser.close()
