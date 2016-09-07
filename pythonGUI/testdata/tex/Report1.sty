@@ -1,0 +1,188 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{Report1}[3/19/2016 My Report Class]
+
+\RequirePackage[T1]{fontenc}          % change font encoding to T1
+\RequirePackage{lmodern}  %better for visual on screen
+
+% Used for adding Matlab Algorithms
+\RequirePackage{listings}
+\RequirePackage[framed,numbered]{matlab-prettifier}
+
+% Adds link to script
+\RequirePackage[hidelinks]{hyperref}
+
+%Add for urls
+\RequirePackage{url}
+
+% Add images
+\RequirePackage{graphicx}
+
+% Format bibliography
+\RequirePackage[round]{natbib}
+
+% Add todo notes and todo list
+\RequirePackage{todonotes}
+
+%used for excel to latex
+\RequirePackage{booktabs}
+
+% allows eqref
+\RequirePackage{amsmath}
+
+% allows overbars
+\RequirePackage{amsfonts}
+
+%change the margins
+\RequirePackage[margin=1in]{geometry} 
+
+%no Hyphens with \nohyphens
+\RequirePackage{hyphenat}
+
+%lets you use the [H] command to force float placement
+\RequirePackage{float}
+
+%lets you use EPS figures
+\RequirePackage{epstopdf}
+
+%custom header/footers
+\RequirePackage{fancyhdr} 
+\RequirePackage{extramarks}
+
+%use for numbered lists
+\RequirePackage{enumerate}
+
+%for adding dummy text
+\RequirePackage{lipsum}
+
+%Use for degree symbol
+\RequirePackage{gensymb}
+
+%Use for File structure
+\RequirePackage{dirtree}
+
+%draw with tikz and label angles
+\RequirePackage{tikz}
+\RequirePackage{tkz-euclide}
+
+\usetkzobj{all}
+
+
+
+%make references include the type of reference
+\newcommand*{\tabref}[1]{\tablename~\ref{#1}}
+\newcommand*{\figref}[1]{\figurename~\ref{#1}}
+\newcommand*{\algref}[1]{\nohyphens{\lstlistingname}~\ref{#1}}
+\newcommand*{\ddx}[2]{\frac{\delta #1}{\delta #2}}
+
+\renewcommand{\lstlistingname}{Algorithm}% Listing -> Algorithm
+\renewcommand{\lstlistlistingname}{List of \lstlistingname s}% List of 
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\newcommand*{\insertHWTitle}[4]{ %Class Name, Title, student name, date
+	\pagestyle{fancy}
+	\lhead{#3}
+	\chead{#1: #2}
+	\rhead{#4}	
+	
+}
+
+
+
+\newcommand*{\insertSmallTitle}[4]{ %Class Name, Title, student name, date
+	\title{	
+		\normalfont \normalsize 
+		\textsc{#1} \\ [25pt] % Your university, school and/or department name(s)
+		\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+		\huge #2 \\ % The assignment title
+		\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+	}
+	
+	\author{#3} % Your name
+	
+	\date{\normalsize#4} % Today's date or a custom date
+	\maketitle
+}
+
+\newcommand*{\insertOSUTitle}[6]{ %LogoLocation, Major Heading, Minor Heading, Title, First Name, Last Name, date
+	\begin{titlepage}
+		
+		\begin{center}
+			\vspace*{2cm}
+			\includegraphics[width = 3.5in]{OSUlogo}\\[3cm] % Include a department/university logo - this will require the graphicx package
+			
+			%\textsc{\LARGE Cormorant Analytics}\\[1.5cm] % Name of your university/college
+			\textsc{\large #1}\\[0.5cm] % Major heading such as course name
+			\textsc{\large #2}\\[0.5cm] % Minor heading such as course title
+			
+			\rule{\linewidth}{0.5mm} \\[0.4cm]
+			{ \huge \bfseries #3}\\[0.4cm] % Title of your document
+			\rule{\linewidth}{0.5mm} \\[1.5cm]
+			
+			% If you don't want a supervisor, uncomment the two lines below and remove the section above
+			\Large \emph{Prepared By:}\\
+			#4 \textsc{#5}\\[7cm] % Your name
+			
+			{\large #6}\\[3cm] % Date, change the \today to a set date if you want to be precise
+			
+			\vfill % Fill the rest of the page with whitespace
+		\end{center}
+	\end{titlepage}
+}
+
+\newcommand*{\insertOSUTitleTwo}[8]{ %LogoLocation, Major Heading, Minor Heading, Title, First Name, Last Name, date
+	\begin{titlepage}
+		
+		\begin{center}
+			
+			\vspace*{2cm}
+			
+			\includegraphics[width = 3.5in]{OSUlogo}\\[3cm] % Include a department/university logo - this will require the graphicx package
+			
+			%\textsc{\LARGE Cormorant Analytics}\\[1.5cm] % Name of your university/college
+			\textsc{\large #1}\\[0.5cm] % Major heading such as course name
+			\textsc{\large #2}\\[0.5cm] % Minor heading such as course title
+			
+			\rule{\linewidth}{0.5mm} \\[0.4cm]
+			{ \huge \bfseries #3}\\[0.4cm] % Title of your document
+			\rule{\linewidth}{0.5mm} \\[1.5cm]
+			
+			% If you don't want a supervisor, uncomment the two lines below and remove the section above
+			\Large \emph{Prepared By:}\\
+			#4 \textsc{#5}\\
+			#6 \textsc{#7}\\
+			[5cm] % Your name
+			
+			{\large #8}\\[1cm] % Date, change the \today to a set date if you want to be precise
+			
+			\vfill % Fill the rest of the page with whitespace
+		\end{center}
+	\end{titlepage}
+}
+
+
+\newcommand*{\insertCormorantTitle}[6]{ %LogoLocation, Major Heading, Minor Heading, Title, First Name, Last Name, date
+	\begin{titlepage}
+		
+		\begin{center}
+			
+			\includegraphics[width = 2.5in]{birdword}\\[1cm] % Include a department/university logo - this will require the graphicx package
+			
+			%\textsc{\LARGE Cormorant Analytics}\\[1.5cm] % Name of your university/college
+			\textsc{\large #1}\\[0.5cm] % Major heading such as course name
+			\textsc{\large #2}\\[0.5cm] % Minor heading such as course title
+			
+			\rule{\linewidth}{0.5mm} \\[0.4cm]
+			{ \huge \bfseries #3}\\[0.4cm] % Title of your document
+			\rule{\linewidth}{0.5mm} \\[1.5cm]
+			
+			% If you don't want a supervisor, uncomment the two lines below and remove the section above
+			\Large \emph{Prepared By:}\\
+			#4 \textsc{#5}\\[7cm] % Your name
+			
+			{\large #6}\\[3cm] % Date, change the \today to a set date if you want to be precise
+			
+			\vfill % Fill the rest of the page with whitespace
+		\end{center}
+	\end{titlepage}
+}

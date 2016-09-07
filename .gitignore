@@ -1,1 +1,7 @@
 *.~vsdx
+.idea/
+build/
+dist/
+*.out
+*.aux
+*.gz
