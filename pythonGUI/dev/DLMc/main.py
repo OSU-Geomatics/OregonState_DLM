@@ -62,5 +62,5 @@ def dlmfindcomports():
 
 if __name__ == '__main__':
     run(sys.argv)
-    print("Success!")
+    print("Exiting Program")
     time.sleep(1)
