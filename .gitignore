@@ -13,3 +13,5 @@ dist/
 *.out
 *.aux
 *.gz
+
+sandbox/
