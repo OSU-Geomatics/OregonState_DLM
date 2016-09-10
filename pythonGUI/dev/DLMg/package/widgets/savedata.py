@@ -19,6 +19,7 @@ class SaveData(QWidget):
         self.layout_middle = QHBoxLayout()
         self.checkBox = QCheckBox()
         self.checkBox.setText("File Name")
+        self.checkBox.stateChanged.connect(self.updateStatus)
         self.lineEdit = QLineEdit()
         self.filebtn = QPushButton("...")
         self.filebtn.clicked.connect(self.selectFile)
@@ -29,7 +30,7 @@ class SaveData(QWidget):
 
         # start and stop buttons
         self.startbutton = QPushButton('Start')
-        self.stopbutton = QPushButton('Start')
+        self.stopbutton = QPushButton('Stop')
         self.layout_bottom = QHBoxLayout()
         self.layout_bottom.addWidget(self.startbutton)
         self.layout_bottom.addWidget(self.stopbutton)
@@ -38,9 +39,20 @@ class SaveData(QWidget):
         self.layout.setAlignment(Qt.AlignTop)
         self.setLayout(self.layout)
 
-    def selectFile(self):
+        self.updateStatus()
 
-        self.lineEdit.setText(QFileDialog.getSaveFileName(self, "Select Output File", None, "Text Files (*.txt)"))
+    def selectFile(self):
+        dlg = QFileDialog()
+        self.lineEdit.setText(dlg.getSaveFileName(dlg, "Select Output File", None, "Text Files (*.txt)"))
 
     def boldfont(self, fontsize):
         return QFont("Times", fontsize, QFont.Bold)
+
+    def updateStatus(self):
+        if self.checkBox.isChecked():
+            self.filebtn.setEnabled(True)
+            self.lineEdit.setEnabled(True)
+        else:
+            self.filebtn.setEnabled(False)
+            self.lineEdit.setEnabled(False)
+            self.lineEdit.setText("")

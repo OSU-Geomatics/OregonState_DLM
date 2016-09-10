@@ -21,6 +21,9 @@ class LegendWidget(QWidget):
         for entry in entries:
             icheckbox = QCheckBox()
             icheckbox.setText(entry)
+            icheckbox.stateChanged.connect(self.changeState)
+
+            icheckbox.setFixedSize(icheckbox.minimumSizeHint())
             icolorbutton = pg.ColorButton()
             icolorbutton.setFixedWidth(50)
             self.checkboxes.append(icheckbox)
@@ -29,10 +32,24 @@ class LegendWidget(QWidget):
         for icheckbox, icolorpicker in zip(self.checkboxes, self.colorpicker):
             iLayout = QHBoxLayout()
             iLayout.addWidget(icheckbox)
+
+            hline1 = QFrame()
+            hline1.setFrameStyle(QFrame.HLine | QFrame.Raised)
+            iLayout.addWidget(hline1)
+
             iLayout.addWidget(icolorpicker)
             self.layout.addLayout(iLayout)
 
         self.setLayout(self.layout)
 
+        self.changeState()
+
     def boldfont(self, fontsize):
         return QFont("Times", fontsize, QFont.Bold)
+
+    def changeState(self):
+        for icheckbox, icolorpicker in zip(self.checkboxes, self.colorpicker):
+            if icheckbox.isChecked():
+                icolorpicker.setEnabled(True)
+            else:
+                icolorpicker.setEnabled(False)

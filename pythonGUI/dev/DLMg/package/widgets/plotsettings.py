@@ -19,6 +19,8 @@ class PlotSettings(QWidget):
         for entry in entries:
             icheckbox = QCheckBox()
             icheckbox.setText(entry)
+            icheckbox.stateChanged.connect(self.changeState)
+
             itextinput = QSpinBox()
             itextinput.setFixedWidth(50)
             self.checkboxes.append(icheckbox)
@@ -34,5 +36,14 @@ class PlotSettings(QWidget):
 
         self.setLayout(self.layout)
 
+        self.changeState()
+
     def boldfont(self, fontsize):
         return QFont("Times", fontsize, QFont.Bold)
+
+    def changeState(self):
+        for icheckbox, itextinput in zip(self.checkboxes, self.textinput):
+            if icheckbox.isChecked():
+                itextinput.setEnabled(True)
+            else:
+                itextinput.setEnabled(False)

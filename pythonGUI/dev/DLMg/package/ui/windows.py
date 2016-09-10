@@ -41,12 +41,11 @@ class MainWindow(QMainWindow):
         self.widget_status = StatusWindow()
         self.widget_savedata = SaveData()
 
-        # create title for layouts
-
         # build ui
         self.build_ui()
 
         # make connections
+
         self.widget_status.addstatus('test')
         self.widget_status.addstatus('test2')
         self.widget_status.addstatus('test3')
@@ -93,3 +92,11 @@ class MainWindow(QMainWindow):
         p.setColor(self.widget_legend.backgroundRole(), Qt.gray)
         self.widget_legend.setPalette(p)
         # Set Widget Names
+
+    def updateAll(self, *__args):
+        self.update()
+        self.widget_legend.update()
+        self.widget_settings.update()
+        self.widget_plot.update()
+        self.widget_status.update()
+        self.widget_savedata.update()
