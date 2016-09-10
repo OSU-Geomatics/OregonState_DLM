@@ -4,6 +4,7 @@ from package.widgets.togglelegend import LegendWidget
 from package.widgets.plotsettings import PlotSettings
 from package.widgets.statuswindow import StatusWindow
 from package.widgets.savedata import SaveData
+from package.widgets.updaterate import UpdateRate
 
 import pyqtgraph as pg
 import time
@@ -34,10 +35,13 @@ class MainWindow(QMainWindow):
                            'minY axis',
                            'Line Thickness',
                            )
+        updateNames = ("A(Hz):", "B(Hz):", "C(Hz):", "D(Hz):", "fps:")
+
         # create widgets
         self.widget_legend = LegendWidget(legendEntries)
         self.widget_settings = PlotSettings(settingsEntries)
         self.widget_plot = pg.PlotWidget()
+        self.widget_updateRate = UpdateRate(updateNames)
         self.widget_status = StatusWindow()
         self.widget_savedata = SaveData()
 
@@ -76,6 +80,7 @@ class MainWindow(QMainWindow):
         self.layout_left.addWidget(self.widget_settings)
         self.layout_right.addWidget(self.widget_plot)
         self.layout_right.addWidget(hline2)
+        self.layout_right.addWidget(self.widget_updateRate)
         self.layout_right.addWidget(self.widget_bottom)
         self.widget_bottom.setLayout(self.layout_bottom)
         self.layout_bottom.addWidget(self.widget_status)
@@ -84,7 +89,7 @@ class MainWindow(QMainWindow):
 
         # Size Left and Bottom Layouts
         self.widget_left.setFixedWidth(200)
-        self.widget_bottom.setFixedHeight(200)
+        self.widget_bottom.setFixedHeight(175)
 
         # Add Color
         self.widget_legend.setAutoFillBackground(True)
@@ -93,10 +98,14 @@ class MainWindow(QMainWindow):
         self.widget_legend.setPalette(p)
         # Set Widget Names
 
-    def updateAll(self, *__args):
+        #temp dummy code
+        self.widget_updateRate.setrates((1, 2, 3, 4, 5))
+
+    def updateAll(self):
         self.update()
         self.widget_legend.update()
         self.widget_settings.update()
         self.widget_plot.update()
+        self.widget_updateRate.update()
         self.widget_status.update()
         self.widget_savedata.update()
