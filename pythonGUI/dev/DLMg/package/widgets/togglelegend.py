@@ -11,6 +11,7 @@ class LegendWidget(QWidget):
         self.checkboxes = []
         self.colorpicker = []
         self.isPlotting = []
+        self.colors = [None] * len(entries)
 
         # Add Legend Title
         self.legendtitle = QLabel()
@@ -27,6 +28,7 @@ class LegendWidget(QWidget):
             icheckbox.setFixedSize(icheckbox.minimumSizeHint())
             icolorbutton = pg.ColorButton()
             icolorbutton.setFixedWidth(50)
+            icolorbutton.sigColorChanged.connect(self.changeState)
 
             self.checkboxes.append(icheckbox)
             self.colorpicker.append(icolorbutton)
@@ -58,6 +60,8 @@ class LegendWidget(QWidget):
                 icolorpicker.setEnabled(False)
 
         for i in range(0,len(self.checkboxes)):
+            self.colors[i] = self.colorpicker[i].color().getRgb()
+
             if self.checkboxes[i].isChecked():
                 self.isPlotting[i] = True
             else:

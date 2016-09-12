@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         # create widgets
         self.widget_legend = LegendWidget(legendEntries)
         self.widget_settings = PlotSettings(settingsEntries)
-        self.widget_plot = MyPlotWidget()
+        self.widget_plot = MyPlotWidget(16)
         self.widget_updateRate = UpdateRate(updateNames)
         self.widget_status = StatusWindow()
         self.widget_savedata = SaveData()
@@ -65,10 +65,8 @@ class MainWindow(QMainWindow):
         self.data.startReaderThread(self.com1, self.widget_savedata.doreaddata)
         self.data.startReaderThread(self.com2, self.widget_savedata.doreaddata)
 
-        # start update timer
-        timer = QTimer()
-        timer.timeout.connect(self.updateAll)
-        timer.start(0)
+        # dummy data #remove this code
+        self.data.addDummyData()
 
     def testcomports(self):
         # connect to COM ports
@@ -82,9 +80,7 @@ class MainWindow(QMainWindow):
         return [com1, com2]
 
     def set_plotData(self):
-        p = []
-        for i in range(0,15):
-            p[i] =self.widget_plot.plot()
+        print("!")
 
     def load_defaults(self):
         # legend
@@ -105,6 +101,8 @@ class MainWindow(QMainWindow):
         p = self.widget_legend.palette()
         p.setColor(self.widget_legend.backgroundRole(), Qt.lightGray)
         self.widget_legend.setPalette(p)
+
+        self.widget_legend.changeState()
 
         # plot settings
         isTrue = (True, True, True, True)
@@ -165,7 +163,6 @@ class MainWindow(QMainWindow):
         # Set Widget Names
 
     def updateAll(self):
-        print("??")
         self.update()
         self.widget_legend.update()
         self.widget_settings.update()
@@ -173,7 +170,38 @@ class MainWindow(QMainWindow):
         self.widget_updateRate.update()
         self.widget_status.update()
         self.widget_savedata.update()
-        print("A")
+        self.plot_data()
 
     def addStatus(self, status):
         self.widget_status.addstatus(status)
+
+    def plot_data(self):
+        self.widget_plot.setPlotLineSettings(self.widget_legend.colors, self.widget_settings.textinput[3].value())
+        self.ploteachdat(self.data.A, (0, 1, 2, 3), self.widget_legend.isPlotting)
+        self.ploteachdat(self.data.B, (4, 5, 6, 7), self.widget_legend.isPlotting)
+        self.ploteachdat(self.data.C, (8, 9, 10, 11), self.widget_legend.isPlotting)
+        self.ploteachdat(self.data.D, (12, 13, 14, 15), self.widget_legend.isPlotting)
+
+    def ploteachdat(self, X, inds, isPlotting):
+        X.datalock.acquire()
+        if isPlotting[inds[0]]:
+            self.widget_plot.plotData(inds[0], X.time, X.x)
+        else:
+            self.widget_plot.plotData(inds[0], None, None)
+
+        if isPlotting[inds[1]]:
+            self.widget_plot.plotData(inds[1], X.time, X.y)
+        else:
+            self.widget_plot.plotData(inds[1], None, None)
+
+        if isPlotting[inds[2]]:
+            self.widget_plot.plotData(inds[2], X.time, X.z)
+        else:
+            self.widget_plot.plotData(inds[2], None, None)
+
+        if isPlotting[inds[3]]:
+            self.widget_plot.plotData(inds[3], X.time, X.tot)
+        else:
+            self.widget_plot.plotData(inds[3], None, None)
+
+        X.datalock.release()

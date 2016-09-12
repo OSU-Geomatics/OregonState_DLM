@@ -1,11 +1,8 @@
 import serial
 import threading
 import time
+import random
 
-# do data handling and plotting based on gui inputs
-# 1) finish acceldata reader/writer handlers
-# 2) develop plotwidget to handle pointers to variables
-# 3) generate update functions
 
 class acceldata4:
     def __init__(self, com1, com2):
@@ -17,15 +14,18 @@ class acceldata4:
         self.D = Accelerometer()
 
     def startReaderThread(self, comport, flag):
-        print("Starting Thread")
         com1thread = threading.Thread(target=readDLMcsv, args=(comport, self.A, self.B, self.C, self.D, flag))
         com1thread.daemon = True
         com1thread.start()
-        print("Thread Started")
 
     def startWriterThread(self, filename, flag):
         print('temp')
 
+    def addDummyData(self):
+        self.A.adddummy(10000)
+        self.B.adddummy(10000)
+        self.C.adddummy(10000)
+        self.D.adddummy(10000)
 
 def readDLMcsv(comport, AccelA, AccelB, AccelC, AccelD, flag):
     # Try to open the COM port
@@ -100,3 +100,12 @@ class Accelerometer:
         self.tot.append(newdata[4])
         self.dataindex += 1
         self.datalock.release()
+
+    def adddummy(self, N):
+        for i in range(0,N):
+            t = i
+            x = random.random()
+            y = random.random()
+            z = random.random()
+            tot = (x**2+y**2+z**2)**(1/2)
+            self.append((t, x, y, z, tot))
