@@ -2,7 +2,7 @@ import serial
 import threading
 import time
 import random
-
+import numpy as np
 
 class acceldata4:
     def __init__(self, com1, com2):
@@ -18,8 +18,35 @@ class acceldata4:
         com1thread.daemon = True
         com1thread.start()
 
-    def startWriterThread(self, filename, flag):
-        print('temp')
+    def writeData(self, filename):
+        self.A.datalock.acquire()
+        self.B.datalock.acquire()
+        self.C.datalock.acquire()
+        self.D.datalock.acquire()
+        maxind = np.amax((self.A.dataindex, self.B.dataindex, self.C.dataindex, self.D.dataindex))
+        f = open(filename, 'w')
+        for i in range(0,maxind):
+            self.writeIndData(f, self.A, i)
+            self.writeIndData(f, self.B, i)
+            self.writeIndData(f, self.C, i)
+            self.writeIndData(f, self.D, i)
+
+        f.close()
+        self.A.datalock.release()
+        self.B.datalock.release()
+        self.C.datalock.release()
+        self.D.datalock.release()
+
+    def writeIndData(self, f, X, ind):
+        if X.dataindex > ind:
+            tmillis = X.time[ind] * 1000
+            t = "%.0f" % tmillis
+            x = "%.3f" % X.x[ind]
+            y = "%.3f" % X.y[ind]
+            z = "%.3f" % X.z[ind]
+            tot = "%0.3f" % X.tot[ind]
+
+            f.write(X.ID + "," + t + "," + x + "," + y + "," + z + "," + tot + "\n")
 
     def addDummyData(self):
         self.A.adddummy(10000)
@@ -27,21 +54,32 @@ class acceldata4:
         self.C.adddummy(10000)
         self.D.adddummy(10000)
 
+
 def readDLMcsv(comport, AccelA, AccelB, AccelC, AccelD, flag):
     # Try to open the COM port
     try:
         baud = 100
-        ser = serial.Serial(comport, baud) # Teensy doesnt care what Baud rate you put in
+        ser = serial.Serial(comport, baud)  # Teensy doesnt care what Baud rate you put in
     except serial.SerialException:
         print("Unable to open COM port: " + comport)
         return
 
-    ser.flushInput()
+
 
     # keep looping and reading serial data
     tailmessage = bytes(0)
+    usedtobe = False
     while True:
         if flag[0]:
+            if not usedtobe:
+                usedtobe = True
+                AccelA.flush()
+                AccelB.flush()
+                AccelC.flush()
+                AccelD.flush()
+                ser.flushInput()
+                ser.flush()
+
             alldataline = ser.read(ser.inWaiting())
             parsedlines = alldataline.decode().split('\n')
             for line in parsedlines:
@@ -78,6 +116,7 @@ def readDLMcsv(comport, AccelA, AccelB, AccelC, AccelD, flag):
                             print(tailmessage)
         else:
             time.sleep(.05)
+            usedtobe = False
 
 class Accelerometer:
     def __init__(self):
@@ -88,18 +127,23 @@ class Accelerometer:
         self.tot = []
         self.dataindex = 0
         self.saveindex = 0
+        self.throwoutindex = 0
         self.datalock = threading.Lock()
         self.ID = ""
+        self.nthrowout = 50
 
     def append(self, newdata):
-        self.datalock.acquire()
-        self.time.append(newdata[0])
-        self.x.append(newdata[1])
-        self.y.append(newdata[2])
-        self.z.append(newdata[3])
-        self.tot.append(newdata[4])
-        self.dataindex += 1
-        self.datalock.release()
+        if self.throwoutindex > self.nthrowout:
+            self.datalock.acquire()
+            self.time.append(newdata[0])
+            self.x.append(newdata[1])
+            self.y.append(newdata[2])
+            self.z.append(newdata[3])
+            self.tot.append(newdata[4])
+            self.dataindex += 1
+            self.datalock.release()
+        else:
+            self.throwoutindex += 1
 
     def adddummy(self, N):
         for i in range(0,N):
@@ -109,3 +153,13 @@ class Accelerometer:
             z = random.random()
             tot = (x**2+y**2+z**2)**(1/2)
             self.append((t, x, y, z, tot))
+
+    def flush(self):
+        self.time = []
+        self.x = []
+        self.y = []
+        self.z = []
+        self.tot = []
+        self.dataindex = 0
+        self.saveindex = 0
+        self.throwoutindex = 0

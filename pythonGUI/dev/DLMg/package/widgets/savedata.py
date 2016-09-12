@@ -33,9 +33,12 @@ class SaveData(QWidget):
         self.startbutton.clicked.connect(self.startAction)
         self.stopbutton = QPushButton('Stop')
         self.stopbutton.clicked.connect(self.stopAction)
+        self.savebutton = QPushButton('Save')
+
         self.layout_bottom = QHBoxLayout()
         self.layout_bottom.addWidget(self.startbutton)
         self.layout_bottom.addWidget(self.stopbutton)
+        self.layout_bottom.addWidget(self.savebutton)
         self.layout.addLayout(self.layout_bottom)
 
         # add flags for reading/saving data
@@ -58,14 +61,17 @@ class SaveData(QWidget):
         if self.checkBox.isChecked():
             self.filebtn.setEnabled(True)
             self.lineEdit.setEnabled(True)
+            self.savebutton.setEnabled(True)
         else:
             self.filebtn.setEnabled(False)
             self.lineEdit.setEnabled(False)
+            self.savebutton.setEnabled(False)
             self.lineEdit.setText("")
 
     def startAction(self):
         self.startbutton.setEnabled(False)
         self.stopbutton.setEnabled(True)
+        self.savebutton.setEnabled(False)
         self.doreaddata[0] = True
         if self.checkBox.isEnabled():
             self.dowritedata[0] = True
@@ -75,5 +81,8 @@ class SaveData(QWidget):
     def stopAction(self):
         self.stopbutton.setEnabled(False)
         self.startbutton.setEnabled(True)
+        if self.checkBox.isChecked():
+            self.savebutton.setEnabled(True)
+
         self.doreaddata[0] = False
         self.dowritedata[0] = False

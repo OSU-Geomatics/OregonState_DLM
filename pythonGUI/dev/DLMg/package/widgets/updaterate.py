@@ -24,4 +24,5 @@ class UpdateRate(QWidget):
 
     def setrates(self, rates):
         for iRate, iRateLabel in zip(rates, self.curRate):
-            iRateLabel.setText(str(iRate))
+            strval = "%03.1f" % iRate
+            iRateLabel.setText(strval)

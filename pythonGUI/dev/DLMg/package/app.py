@@ -10,6 +10,6 @@ def run(argv):
     # start update timer
     timer = QTimer()
     timer.timeout.connect(win.updateAll)
-    timer.start(100)
+    timer.start(0)
 
     app.exec_()

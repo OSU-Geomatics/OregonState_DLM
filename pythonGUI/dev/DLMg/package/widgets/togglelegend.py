@@ -18,6 +18,7 @@ class LegendWidget(QWidget):
         self.legendtitle.setText('Legend')
         self.legendtitle.setAlignment(Qt.AlignCenter)
         self.legendtitle.setFont(self.boldfont(16))
+        self.legendtitle.setFixedHeight(30)
         self.layout.addWidget(self.legendtitle)
 
         for entry in entries:

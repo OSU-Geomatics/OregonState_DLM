@@ -1,5 +1,6 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
+import numpy as np
 from package.widgets.togglelegend import LegendWidget
 from package.widgets.plotsettings import PlotSettings
 from package.widgets.statuswindow import StatusWindow
@@ -58,15 +59,47 @@ class MainWindow(QMainWindow):
         self.com1, self.com2 = self.testcomports()
         self.data = acceldata4(self.com1, self.com2)
 
-        # add data pointers to plot widget
-        self.set_plotData()
+        # connect widget buttons with actions between widgets
+        self.connect_buttons()
 
         # start data threads
         self.data.startReaderThread(self.com1, self.widget_savedata.doreaddata)
         self.data.startReaderThread(self.com2, self.widget_savedata.doreaddata)
 
+        self.lastupdate = time.time()
+
         # dummy data #remove this code
-        self.data.addDummyData()
+        # self.data.addDummyData()
+
+    def connect_buttons(self):
+        # connect line width spinbox to make plots when changed
+        self.widget_settings.textinput[3].valueChanged.connect(self.doplotdata)
+        self.widget_settings.checkboxes[3].stateChanged.connect(self.doplotdata)
+
+        # connect clicked start and stop buttons with status output
+        self.widget_savedata.startbutton.clicked.connect(self.collectstarted)
+        self.widget_savedata.stopbutton.clicked.connect(self.collectstopped)
+
+        # connect save button
+        self.widget_savedata.savebutton.clicked.connect(self.savedata)
+
+    def savedata(self):
+        filename = self.widget_savedata.lineEdit.text()
+        # add check if filename exists
+
+        self.widget_status.addstatus("Saving Data to: " + filename)
+        self.widget_savedata.startbutton.setEnabled(False)
+        self.widget_savedata.stopbutton.setEnabled(False)
+        self.widget_savedata.savebutton.setEnabled(False)
+        self.data.writeData(filename)
+        self.widget_savedata.startbutton.setEnabled(True)
+        self.widget_status.addstatus("Data Saved: " + filename)
+
+    def collectstarted(self):
+        self.widget_status.addstatus("Started Data Stream")
+
+    def collectstopped(self):
+        self.widget_status.addstatus("Stopped Data Stream")
 
     def testcomports(self):
         # connect to COM ports
@@ -77,10 +110,10 @@ class MainWindow(QMainWindow):
             # initialize data array
         else:
             self.addStatus('Unsuccessful COM port detection')
-        return [com1, com2]
+            self.widget_savedata.startbutton.setEnabled(False)
+            self.widget_savedata.checkBox.setEnabled(False)
 
-    def set_plotData(self):
-        print("!")
+        return [com1, com2]
 
     def load_defaults(self):
         # legend
@@ -125,6 +158,7 @@ class MainWindow(QMainWindow):
         # save data
         self.widget_savedata.checkBox.setChecked(False)
         self.widget_savedata.stopbutton.setEnabled(False)
+        self.widget_savedata.savebutton.setEnabled(False)
 
     def build_ui(self):
         # make cosmetic lines
@@ -160,8 +194,6 @@ class MainWindow(QMainWindow):
         self.widget_left.setFixedWidth(200)
         self.widget_bottom.setFixedHeight(175)
 
-        # Set Widget Names
-
     def updateAll(self):
         self.update()
         self.widget_legend.update()
@@ -170,37 +202,102 @@ class MainWindow(QMainWindow):
         self.widget_updateRate.update()
         self.widget_status.update()
         self.widget_savedata.update()
-        self.plot_data()
+        if self.widget_savedata.doreaddata[0]:
+            self.doplotdata()
+            self.updateRates()
+
+    def updateRates(self):
+        Arate = self.getAccelRate(self.data.A)
+        Brate = self.getAccelRate(self.data.B)
+        Crate = self.getAccelRate(self.data.C)
+        Drate = self.getAccelRate(self.data.D)
+        t = time.time()
+        if t-self.lastupdate == 0:
+            fps = 0
+        else:
+            fps = 1/(t - self.lastupdate)
+
+        self.lastupdate = t
+        self.widget_updateRate.setrates((Arate, Brate, Crate, Drate, fps))
+
+    def getAccelRate(self, X):
+        X.datalock.acquire()
+        if X.dataindex > 400:
+            time = X.time[-400:-1]
+            dt = np.mean(np.diff(time))
+            rate = 1/dt
+        elif X.dataindex > 2:
+            time = X.time[0:-1]
+            dt = np.mean(np.diff(time))
+            rate = 1 / dt
+        else:
+            rate = 0
+        X.datalock.release()
+        return rate
+
+    def doplotdata(self):
+        if self.data.A.dataindex > 0 and self.data.B.dataindex > 0 and self.data.C.dataindex > 0 and self.data.D.dataindex > 0:
+            minTime = np.amin((self.data.A.time[0], self.data.B.time[0], self.data.C.time[0], self.data.D.time[0]))
+            self.set_plot_axis(minTime)
+            self.plot_data(minTime)
+
+    def set_plot_axis(self, mintime):
+        if self.widget_savedata.doreaddata[0]:
+            if self.widget_settings.checkboxes[0].isChecked():
+                if self.data.A.dataindex > 0 and self.data.B.dataindex > 0 and self.data.C.dataindex > 0 and self.data.D.dataindex > 0:
+                    tmax = np.amax((self.data.A.time[-1], self.data.B.time[-1], self.data.C.time[-1], self.data.D.time[-1])) - mintime
+                    self.widget_plot.setXRange(tmax - self.widget_settings.textinput[0].value() + 0.5, tmax + 0.5, padding=0)
+
+            if self.widget_settings.checkboxes[1].isChecked() or self.widget_settings.checkboxes[2].isChecked():
+                if self.widget_settings.checkboxes[1].isChecked() and self.widget_settings.checkboxes[2].isChecked():
+                    ymax = self.widget_settings.textinput[1].value()
+                    ymin = self.widget_settings.textinput[2].value()
+                elif self.widget_settings.checkboxes[2].isChecked():
+                    ymin = self.widget_settings.textinput[2].value()
+                    lims = self.widget_plot.viewRange()
+                    ymax = lims[1][1]
+                elif self.widget_settings.checkboxes[1].isChecked():
+                    lims = self.widget_plot.viewRange()
+                    ymax = self.widget_settings.textinput[1].value()
+                    ymin = lims[1][0]
+
+                self.widget_plot.setYRange(ymin, ymax, padding=0)
 
     def addStatus(self, status):
         self.widget_status.addstatus(status)
 
-    def plot_data(self):
-        self.widget_plot.setPlotLineSettings(self.widget_legend.colors, self.widget_settings.textinput[3].value())
-        self.ploteachdat(self.data.A, (0, 1, 2, 3), self.widget_legend.isPlotting)
-        self.ploteachdat(self.data.B, (4, 5, 6, 7), self.widget_legend.isPlotting)
-        self.ploteachdat(self.data.C, (8, 9, 10, 11), self.widget_legend.isPlotting)
-        self.ploteachdat(self.data.D, (12, 13, 14, 15), self.widget_legend.isPlotting)
+    def plot_data(self, mintime):
+        if self.widget_settings.checkboxes[3].isChecked():
+            linewidth = self.widget_settings.textinput[3].value()
+        else:
+            linewidth = 1
 
-    def ploteachdat(self, X, inds, isPlotting):
+        self.widget_plot.setPlotLineSettings(self.widget_legend.colors, linewidth)
+
+        self.ploteachdat(mintime, self.data.A, (0, 1, 2, 3), self.widget_legend.isPlotting)
+        self.ploteachdat(mintime, self.data.B, (4, 5, 6, 7), self.widget_legend.isPlotting)
+        self.ploteachdat(mintime, self.data.C, (8, 9, 10, 11), self.widget_legend.isPlotting)
+        self.ploteachdat(mintime, self.data.D, (12, 13, 14, 15), self.widget_legend.isPlotting)
+
+    def ploteachdat(self, mintime, X, inds, isPlotting):
         X.datalock.acquire()
         if isPlotting[inds[0]]:
-            self.widget_plot.plotData(inds[0], X.time, X.x)
+            self.widget_plot.plotData(inds[0], X.time-mintime, X.x)
         else:
             self.widget_plot.plotData(inds[0], None, None)
 
         if isPlotting[inds[1]]:
-            self.widget_plot.plotData(inds[1], X.time, X.y)
+            self.widget_plot.plotData(inds[1], X.time-mintime, X.y)
         else:
             self.widget_plot.plotData(inds[1], None, None)
 
         if isPlotting[inds[2]]:
-            self.widget_plot.plotData(inds[2], X.time, X.z)
+            self.widget_plot.plotData(inds[2], X.time-mintime, X.z)
         else:
             self.widget_plot.plotData(inds[2], None, None)
 
         if isPlotting[inds[3]]:
-            self.widget_plot.plotData(inds[3], X.time, X.tot)
+            self.widget_plot.plotData(inds[3], X.time-mintime, X.tot)
         else:
             self.widget_plot.plotData(inds[3], None, None)
 
