@@ -22,6 +22,7 @@ class PlotSettings(QWidget):
             icheckbox.stateChanged.connect(self.changeState)
 
             itextinput = QSpinBox()
+
             itextinput.setFixedWidth(50)
             self.checkboxes.append(icheckbox)
             self.textinput.append(itextinput)

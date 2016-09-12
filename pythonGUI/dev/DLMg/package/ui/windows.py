@@ -5,6 +5,8 @@ from package.widgets.plotsettings import PlotSettings
 from package.widgets.statuswindow import StatusWindow
 from package.widgets.savedata import SaveData
 from package.widgets.updaterate import UpdateRate
+from package.widgets.myplotwidget import MyPlotWidget
+from package.sensors.finddlmports import dlmfindcomports
 
 import pyqtgraph as pg
 import time
@@ -40,7 +42,7 @@ class MainWindow(QMainWindow):
         # create widgets
         self.widget_legend = LegendWidget(legendEntries)
         self.widget_settings = PlotSettings(settingsEntries)
-        self.widget_plot = pg.PlotWidget()
+        self.widget_plot = MyPlotWidget()
         self.widget_updateRate = UpdateRate(updateNames)
         self.widget_status = StatusWindow()
         self.widget_savedata = SaveData()
@@ -48,14 +50,80 @@ class MainWindow(QMainWindow):
         # build ui
         self.build_ui()
 
-        # make connections
-
-        self.widget_status.addstatus('test')
-        self.widget_status.addstatus('test2')
-        self.widget_status.addstatus('test3')
-        self.widget_status.addstatus('test4')
-
         # load default values
+        self.load_defaults()
+
+        # initialize data class
+        self.setup_data()
+
+        # add data pointers to plot widget
+        self.set_plotData()
+
+        # start data threads
+
+
+        # start update timer
+
+
+    def setup_data(self):
+        # connect to COM ports
+        com1, com2, issuccess = dlmfindcomports()
+        if issuccess:
+            self.addStatus("Successful COM port connection")
+            self.addStatus('Connected to ' + com1)
+            self.addStatus('Connected to ' + com2)
+        else:
+            self.addStatus('Unsuccessful COM port detection')
+
+        # initialize data array
+        self.data = 0
+        # enable functions to start acquiring/saving data and handling locks
+
+    def set_plotData(self):
+        print("temp")
+
+
+    def load_defaults(self):
+        # legend
+        self.widget_legend.checkboxes[3].setChecked(True)
+        self.widget_legend.colorpicker[3].setColor((255, 0, 0))
+
+        self.widget_legend.checkboxes[7].setChecked(True)
+        self.widget_legend.colorpicker[7].setColor((0, 255, 0))
+
+        self.widget_legend.checkboxes[11].setChecked(True)
+        self.widget_legend.colorpicker[11].setColor((0, 0, 255))
+
+        self.widget_legend.checkboxes[15].setChecked(True)
+        self.widget_legend.colorpicker[15].setColor((255,255,0))
+
+        # Add legend Color
+        self.widget_legend.setAutoFillBackground(True)
+        p = self.widget_legend.palette()
+        p.setColor(self.widget_legend.backgroundRole(), Qt.lightGray)
+        self.widget_legend.setPalette(p)
+
+        # plot settings
+        isTrue = (True, True, True, True)
+        defaultValue = (10, 8, 0, 0)
+        defaultMin = (1, -10, -10, 1)
+        defaultMax = (1000, 10, 10, 10)
+
+        for i in range(0,4):
+            self.widget_settings.checkboxes[i].setChecked(isTrue[i])
+            self.widget_settings.textinput[i].setValue(defaultValue[i])
+            self.widget_settings.textinput[i].setMinimum(defaultMin[i])
+            self.widget_settings.textinput[i].setMaximum(defaultMax[i])
+
+        # update rate
+        self.widget_updateRate.setrates((0, 0, 0, 0, 0))
+
+        # status
+        self.widget_status.addstatus('GUI initialized')
+
+        # save data
+        self.widget_savedata.checkBox.setChecked(False)
+        self.widget_savedata.stopbutton.setEnabled(False)
 
     def build_ui(self):
         # make cosmetic lines
@@ -91,15 +159,7 @@ class MainWindow(QMainWindow):
         self.widget_left.setFixedWidth(200)
         self.widget_bottom.setFixedHeight(175)
 
-        # Add Color
-        self.widget_legend.setAutoFillBackground(True)
-        p = self.widget_legend.palette()
-        p.setColor(self.widget_legend.backgroundRole(), Qt.gray)
-        self.widget_legend.setPalette(p)
         # Set Widget Names
-
-        #temp dummy code
-        self.widget_updateRate.setrates((1, 2, 3, 4, 5))
 
     def updateAll(self):
         self.update()
@@ -109,3 +169,6 @@ class MainWindow(QMainWindow):
         self.widget_updateRate.update()
         self.widget_status.update()
         self.widget_savedata.update()
+
+    def addStatus(self, status):
+        self.widget_status.addstatus(status)

@@ -1,6 +1,6 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-
+import datetime
 
 class StatusWindow(QWidget):
     def __init__(self):
@@ -20,7 +20,8 @@ class StatusWindow(QWidget):
         self.setLayout(self.layout)
 
     def addstatus(self, status):
-        self.statusBox.appendPlainText(status)
+        timestr = datetime.datetime.now().strftime("[%H:%M:%S.%f")[0:-3] + ']: '
+        self.statusBox.appendPlainText(timestr + status)
 
     def boldfont(self, fontsize):
         return QFont("Times", fontsize, QFont.Bold)
