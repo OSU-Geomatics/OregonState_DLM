@@ -1,6 +1,7 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+
 class PlotSettings(QWidget):
     def __init__(self, entries):
         super(PlotSettings, self).__init__()

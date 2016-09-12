@@ -7,6 +7,7 @@ from package.widgets.savedata import SaveData
 from package.widgets.updaterate import UpdateRate
 from package.widgets.myplotwidget import MyPlotWidget
 from package.sensors.finddlmports import dlmfindcomports
+from package.sensors.acceldata import acceldata4
 
 import pyqtgraph as pg
 import time
@@ -54,34 +55,36 @@ class MainWindow(QMainWindow):
         self.load_defaults()
 
         # initialize data class
-        self.setup_data()
+        self.com1, self.com2 = self.testcomports()
+        self.data = acceldata4(self.com1, self.com2)
 
         # add data pointers to plot widget
         self.set_plotData()
 
         # start data threads
-
+        self.data.startReaderThread(self.com1, self.widget_savedata.doreaddata)
+        self.data.startReaderThread(self.com2, self.widget_savedata.doreaddata)
 
         # start update timer
+        timer = QTimer()
+        timer.timeout.connect(self.updateAll)
+        timer.start(0)
 
-
-    def setup_data(self):
+    def testcomports(self):
         # connect to COM ports
         com1, com2, issuccess = dlmfindcomports()
         if issuccess:
-            self.addStatus("Successful COM port connection")
             self.addStatus('Connected to ' + com1)
             self.addStatus('Connected to ' + com2)
+            # initialize data array
         else:
             self.addStatus('Unsuccessful COM port detection')
-
-        # initialize data array
-        self.data = 0
-        # enable functions to start acquiring/saving data and handling locks
+        return [com1, com2]
 
     def set_plotData(self):
-        print("temp")
-
+        p = []
+        for i in range(0,15):
+            p[i] =self.widget_plot.plot()
 
     def load_defaults(self):
         # legend
@@ -95,7 +98,7 @@ class MainWindow(QMainWindow):
         self.widget_legend.colorpicker[11].setColor((0, 0, 255))
 
         self.widget_legend.checkboxes[15].setChecked(True)
-        self.widget_legend.colorpicker[15].setColor((255,255,0))
+        self.widget_legend.colorpicker[15].setColor((255, 255, 0))
 
         # Add legend Color
         self.widget_legend.setAutoFillBackground(True)
@@ -162,6 +165,7 @@ class MainWindow(QMainWindow):
         # Set Widget Names
 
     def updateAll(self):
+        print("??")
         self.update()
         self.widget_legend.update()
         self.widget_settings.update()
@@ -169,6 +173,7 @@ class MainWindow(QMainWindow):
         self.widget_updateRate.update()
         self.widget_status.update()
         self.widget_savedata.update()
+        print("A")
 
     def addStatus(self, status):
         self.widget_status.addstatus(status)

@@ -30,11 +30,17 @@ class SaveData(QWidget):
 
         # start and stop buttons
         self.startbutton = QPushButton('Start')
+        self.startbutton.clicked.connect(self.startAction)
         self.stopbutton = QPushButton('Stop')
+        self.stopbutton.clicked.connect(self.stopAction)
         self.layout_bottom = QHBoxLayout()
         self.layout_bottom.addWidget(self.startbutton)
         self.layout_bottom.addWidget(self.stopbutton)
         self.layout.addLayout(self.layout_bottom)
+
+        # add flags for reading/saving data
+        self.doreaddata = [False]
+        self.dowritedata = [False]
 
         self.layout.setAlignment(Qt.AlignTop)
         self.setLayout(self.layout)
@@ -56,3 +62,18 @@ class SaveData(QWidget):
             self.filebtn.setEnabled(False)
             self.lineEdit.setEnabled(False)
             self.lineEdit.setText("")
+
+    def startAction(self):
+        self.startbutton.setEnabled(False)
+        self.stopbutton.setEnabled(True)
+        self.doreaddata[0] = True
+        if self.checkBox.isEnabled():
+            self.dowritedata[0] = True
+        else:
+            self.doreaddata[0] = False
+
+    def stopAction(self):
+        self.stopbutton.setEnabled(False)
+        self.startbutton.setEnabled(True)
+        self.doreaddata[0] = False
+        self.dowritedata[0] = False
