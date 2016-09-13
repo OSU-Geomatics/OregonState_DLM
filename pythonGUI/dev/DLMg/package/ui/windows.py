@@ -1,6 +1,7 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import numpy as np
+import os
 from package.widgets.togglelegend import LegendWidget
 from package.widgets.plotsettings import PlotSettings
 from package.widgets.statuswindow import StatusWindow
@@ -86,14 +87,39 @@ class MainWindow(QMainWindow):
     def savedata(self):
         filename = self.widget_savedata.lineEdit.text()
         # add check if filename exists
+        if os.path.isfile(filename):
+            i = 0
+            newfilename = filename
+            while os.path.isfile(newfilename):
+                i += 1
+                newfilename = filename[0:-3] + "%03.d" % i + ".txt"
+            filename = newfilename
 
-        self.widget_status.addstatus("Saving Data to: " + filename)
-        self.widget_savedata.startbutton.setEnabled(False)
-        self.widget_savedata.stopbutton.setEnabled(False)
-        self.widget_savedata.savebutton.setEnabled(False)
-        self.data.writeData(filename)
-        self.widget_savedata.startbutton.setEnabled(True)
-        self.widget_status.addstatus("Data Saved: " + filename)
+        if self.isvalidsavename(filename):
+            self.widget_status.addstatus("Saving Data to: " + filename)
+            self.widget_savedata.startbutton.setEnabled(False)
+            self.widget_savedata.stopbutton.setEnabled(False)
+            self.widget_savedata.savebutton.setEnabled(False)
+            self.data.writeData(filename)
+            self.widget_savedata.startbutton.setEnabled(True)
+            self.widget_status.addstatus("Data Saved: " + filename)
+        else:
+            self.popupwarning()
+
+    def popupwarning(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setWindowTitle("Warning! ")
+        msg.setText("Invalid Filename")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
+
+    def isvalidsavename(self, savename):
+        try:
+            open(savename, 'w').close()
+            return True
+        finally:
+            return False
 
     def collectstarted(self):
         self.widget_status.addstatus("Started Data Stream")
