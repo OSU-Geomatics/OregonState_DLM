@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['main.py'],
-             pathex=['dev\\DLMc'],
+             pathex=['dev\\DLMg'],
              binaries=None,
              datas=None,
              hiddenimports=[],
@@ -21,7 +21,7 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='DLMc',
+          name='DLMg',
           debug=False,
           strip=False,
           upx=True,
