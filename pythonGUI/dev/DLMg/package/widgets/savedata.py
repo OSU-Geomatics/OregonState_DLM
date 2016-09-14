@@ -86,3 +86,4 @@ class SaveData(QWidget):
 
         self.doreaddata[0] = False
         self.dowritedata[0] = False
+        self.startbutton.setText("Restart")

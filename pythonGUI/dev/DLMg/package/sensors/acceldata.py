@@ -155,6 +155,7 @@ class Accelerometer:
             self.append((t, x, y, z, tot))
 
     def flush(self):
+        self.datalock.acquire()
         self.time = []
         self.x = []
         self.y = []
@@ -163,3 +164,4 @@ class Accelerometer:
         self.dataindex = 0
         self.saveindex = 0
         self.throwoutindex = 0
+        self.datalock.release()

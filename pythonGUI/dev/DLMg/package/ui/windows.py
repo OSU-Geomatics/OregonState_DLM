@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
         self.data.startReaderThread(self.com2, self.widget_savedata.doreaddata)
 
         self.lastupdate = time.time()
-
+        self.datasaved = True  # dont want to throw a warning because no data could have been saved
         # dummy data #remove this code
         # self.data.addDummyData()
 
@@ -94,7 +94,7 @@ class MainWindow(QMainWindow):
                 i += 1
                 newfilename = filename[0:-3] + "%03.d" % i + ".txt"
             filename = newfilename
-
+        print(filename)
         if self.isvalidsavename(filename):
             self.widget_status.addstatus("Saving Data to: " + filename)
             self.widget_savedata.startbutton.setEnabled(False)
@@ -103,14 +103,15 @@ class MainWindow(QMainWindow):
             self.data.writeData(filename)
             self.widget_savedata.startbutton.setEnabled(True)
             self.widget_status.addstatus("Data Saved: " + filename)
+            self.datasaved = True
         else:
-            self.popupwarning()
+            self.popupwarning("Invalid Filename")
 
-    def popupwarning(self):
+    def popupwarning(self, warning):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("Warning! ")
-        msg.setText("Invalid Filename")
+        msg.setText(warning)
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec_()
 
@@ -118,14 +119,17 @@ class MainWindow(QMainWindow):
         try:
             open(savename, 'w').close()
             return True
-        finally:
+        except:
             return False
 
     def collectstarted(self):
         self.widget_status.addstatus("Started Data Stream")
+        self.datasaved = False
 
     def collectstopped(self):
         self.widget_status.addstatus("Stopped Data Stream")
+        if self.widget_savedata.checkBox.isChecked():
+            self.savedata()
 
     def testcomports(self):
         # connect to COM ports
