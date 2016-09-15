@@ -1,4 +1,6 @@
-# OregonState_DLM
+# OregonState_DLM 
+
+<img src="https://github.com/OSU-Geomatics/OregonState_DLM/blob/master/pythonGUI/dev/DLMc/ico/beaverLogo.png" width="64"> 
 ## Desktop Learning Modules - Response Spectrum Devices
 Here we can add a lot of documentation, images, etc
 We will also link to the wiki page for documentation
@@ -20,4 +22,4 @@ end
 
 ## Lets make this better
 
-***I just word vomitted this, we will edit it to be nice before we distribute it***
+***I just threw works on this, we will edit it to be nice before we distribute it***
