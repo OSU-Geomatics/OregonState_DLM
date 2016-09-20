@@ -80,6 +80,7 @@ class MainWindow(QMainWindow):
         # connect clicked start and stop buttons with status output
         self.widget_savedata.startbutton.clicked.connect(self.collectstarted)
         self.widget_savedata.stopbutton.clicked.connect(self.collectstopped)
+        self.widget_savedata.stopbutton.clicked.connect(self.doplotdata)
 
         # connect save button
         self.widget_savedata.savebutton.clicked.connect(self.savedata)
@@ -311,24 +312,42 @@ class MainWindow(QMainWindow):
 
     def ploteachdat(self, mintime, X, inds, isPlotting):
         X.datalock.acquire()
-        if isPlotting[inds[0]]:
-            self.widget_plot.plotData(inds[0], X.time-mintime, X.x)
-        else:
-            self.widget_plot.plotData(inds[0], None, None)
+        if X.dataindex > 1:
+            tmax = np.amax((self.data.A.time[-1], self.data.B.time[-1], self.data.C.time[-1], self.data.D.time[-1])) - mintime
+            tmin = tmax - self.widget_settings.textinput[0].value() + 0.5
+            if (X.time[0] - mintime < tmin) and self.widget_savedata.doreaddata[0] and self.widget_settings.checkboxes[0].isChecked():
+                idx = next(x[0] for x in enumerate(X.time-mintime) if x[1] > tmin)
+                print(idx)
+                t = X.time[idx:-1]-mintime
+                x = X.x[idx:-1]
+                y = X.y[idx:-1]
+                z = X.z[idx:-1]
+                tot = X.tot[idx:-1]
+            else:
+                t = X.time[0:-1]-mintime
+                x = X.x[0:-1]
+                y = X.y[0:-1]
+                z = X.z[0:-1]
+                tot = X.tot[0:-1]
 
-        if isPlotting[inds[1]]:
-            self.widget_plot.plotData(inds[1], X.time-mintime, X.y)
-        else:
-            self.widget_plot.plotData(inds[1], None, None)
+            if isPlotting[inds[0]]:
+                self.widget_plot.plotData(inds[0], t, x)
+            else:
+                self.widget_plot.plotData(inds[0], None, None)
 
-        if isPlotting[inds[2]]:
-            self.widget_plot.plotData(inds[2], X.time-mintime, X.z)
-        else:
-            self.widget_plot.plotData(inds[2], None, None)
+            if isPlotting[inds[1]]:
+                self.widget_plot.plotData(inds[1], t, y)
+            else:
+                self.widget_plot.plotData(inds[1], None, None)
 
-        if isPlotting[inds[3]]:
-            self.widget_plot.plotData(inds[3], X.time-mintime, X.tot)
-        else:
-            self.widget_plot.plotData(inds[3], None, None)
+            if isPlotting[inds[2]]:
+                self.widget_plot.plotData(inds[2], t, z)
+            else:
+                self.widget_plot.plotData(inds[2], None, None)
+
+            if isPlotting[inds[3]]:
+                self.widget_plot.plotData(inds[3], t, tot)
+            else:
+                self.widget_plot.plotData(inds[3], None, None)
 
         X.datalock.release()

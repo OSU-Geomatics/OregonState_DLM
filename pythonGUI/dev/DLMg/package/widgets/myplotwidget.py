@@ -17,7 +17,7 @@ class MyPlotWidget(pg.PlotWidget):
             self.plot_handles.append(self.plotItem.plot())
 
     def setPlotLineSettings(self, colors, width):
-        for i, iplot_handle in zip(range(0,len(self.plot_handles)), self.plot_handles):
+        for i, iplot_handle in zip(range(0, len(self.plot_handles)), self.plot_handles):
             iplot_handle.curve.setPen(color=colors[i], width=width)
 
     def plotData(self, i, x, y):
