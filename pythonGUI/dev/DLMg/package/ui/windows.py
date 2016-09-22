@@ -85,6 +85,12 @@ class MainWindow(QMainWindow):
         # connect save button
         self.widget_savedata.savebutton.clicked.connect(self.savedata)
 
+        #connect legend changes to update plot
+        for icheckbox in self.widget_legend.checkboxes:
+            icheckbox.stateChanged.connect(self.doplotdata)
+        for icolorbox in self.widget_legend.colorpicker:
+            icolorbox.sigColorChanged.connect(self.doplotdata)
+
     def savedata(self):
         filename = self.widget_savedata.lineEdit.text()
         # add check if filename exists
