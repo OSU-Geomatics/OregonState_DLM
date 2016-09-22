@@ -317,7 +317,6 @@ class MainWindow(QMainWindow):
             tmin = tmax - self.widget_settings.textinput[0].value() + 0.5
             if (X.time[0] - mintime < tmin) and self.widget_savedata.doreaddata[0] and self.widget_settings.checkboxes[0].isChecked():
                 idx = next(x[0] for x in enumerate(X.time-mintime) if x[1] > tmin)
-                print(idx)
                 t = X.time[idx:-1]-mintime
                 x = X.x[idx:-1]
                 y = X.y[idx:-1]
