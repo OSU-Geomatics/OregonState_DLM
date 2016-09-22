@@ -313,7 +313,7 @@ class MainWindow(QMainWindow):
     def ploteachdat(self, mintime, X, inds, isPlotting):
         X.datalock.acquire()
         if X.dataindex > 1:
-            tmax = np.amax((self.data.A.time[-1], self.data.B.time[-1], self.data.C.time[-1], self.data.D.time[-1])) - mintime
+            tmax = X.time[-1] - mintime
             tmin = tmax - self.widget_settings.textinput[0].value() + 0.5
             if (X.time[0] - mintime < tmin) and self.widget_savedata.doreaddata[0] and self.widget_settings.checkboxes[0].isChecked():
                 idx = next(x[0] for x in enumerate(X.time-mintime) if x[1] > tmin)
