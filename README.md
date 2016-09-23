@@ -1,6 +1,16 @@
 # OregonState_DLM 
 
-<img src="https://github.com/OSU-Geomatics/OregonState_DLM/blob/master/pythonGUI/dev/DLMc/ico/beaverLogo.png" width="64"> 
+<img src="https://github.com/OSU-Geomatics/OregonState_DLM/blob/master/pythonGUI/dev/DLMc/ico/beaverLogo.png" width="128">
+^ change this to be a picture of the DLM
+
+(Add Overall Description of the DLM)
+
+## For mor information, use the following links
+
+- [I have been given a DLM-RSD, and want to know how to use it](link)
+- [I want to develop an algorithm to work with DLM-RSD data](link)
+- [I want to build my own DLM-RSD](link)
+
 ## Desktop Learning Modules - Response Spectrum Devices
 Here we can add a lot of documentation, images, etc
 We will also link to the wiki page for documentation
