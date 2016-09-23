@@ -5,11 +5,15 @@
 
 (Add Overall Description of the DLM)
 
-## For mor information, use the following links
+## For more information, use the following links
 
 - [I have been given a DLM-RSD, and want to know how to use it](link)
 - [I want to develop an algorithm to work with DLM-RSD data](link)
 - [I want to build my own DLM-RSD](link)
+
+
+(delete below this before going "live"
+### Example of what you can do with Markdown
 
 ## Desktop Learning Modules - Response Spectrum Devices
 Here we can add a lot of documentation, images, etc
