@@ -1,7 +1,7 @@
 # OregonState_DLM 
 
-<img src="https://github.com/OSU-Geomatics/OregonState_DLM/blob/master/doc/img/RSDlenghs.jpg" width="128">
-<img src="https://github.com/OSU-Geomatics/OregonState_DLM/blob/master/doc/img/RSDweights.jpg" width="128">
+<img src="https://github.com/OSU-Geomatics/OregonState_DLM/blob/master/doc/img/RSDlenghs.jpg" width="350">
+<img src="https://github.com/OSU-Geomatics/OregonState_DLM/blob/master/doc/img/RSDweights.jpg" width="350">
 
 (Add Overall Description of the DLM)
 
