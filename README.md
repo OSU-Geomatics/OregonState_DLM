@@ -1,5 +1,12 @@
 # OregonState_DLM 
+## Quick Links
 
+- [I have been given a DLM-RSD, and want to know how to use it](https://github.com/OSU-Geomatics/OregonState_DLM/wiki/How-To-Use-a-DLM-RSD)
+- [I want to develop an algorithm to work with DLM-RSD data](https://github.com/OSU-Geomatics/OregonState_DLM/wiki/How-To-Contribute)
+- [I want to build my own DLM-RSD](https://github.com/OSU-Geomatics/OregonState_DLM/wiki/Design-And-Fabrication)
+- For more information, check out the [wiki](https://github.com/OSU-Geomatics/OregonState_DLM/wiki)
+
+## Overview
 <img src="https://github.com/OSU-Geomatics/OregonState_DLM/blob/master/doc/img/RSDlenghs.jpg" width="350">
 <img src="https://github.com/OSU-Geomatics/OregonState_DLM/blob/master/doc/img/RSDweights.jpg" width="350">
 
@@ -10,8 +17,4 @@ The response spectrum is an engineering design tool that tracks the response of 
 We developed a DLM to promote the inductive learning of response spectra for transportation infrastructure. We chose to develop and implement the response spectrum device first because of the numerous possible alternatives and it was the most straightforward design, could be developed with the least expense, and would be widely applicable across a variety of civil engineering sub disciplines. Two graduate students, one in transportation engineering and one in geotechnical engineering worked with the machine shop in the college of engineering to design high quality physical models. These models will be implemented in several civil engineering classes at Oregon State University staring in the Fall Quarter of 2016.
 
 
-### For more information, check out the [wiki](https://github.com/OSU-Geomatics/OregonState_DLM/wiki) or use the following links
 
-- [I have been given a DLM-RSD, and want to know how to use it](https://github.com/OSU-Geomatics/OregonState_DLM/wiki/How-To-Use-a-DLM-RSD)
-- [I want to develop an algorithm to work with DLM-RSD data](https://github.com/OSU-Geomatics/OregonState_DLM/wiki/How-To-Contribute)
-- [I want to build my own DLM-RSD](https://github.com/OSU-Geomatics/OregonState_DLM/wiki/Design-And-Fabrication)
